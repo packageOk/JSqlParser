@@ -125,6 +125,7 @@ import net.sf.jsqlparser.statement.select.SubSelect;
 import net.sf.jsqlparser.statement.select.TableFunction;
 import net.sf.jsqlparser.statement.select.ValuesList;
 import net.sf.jsqlparser.statement.select.WithItem;
+import net.sf.jsqlparser.statement.show.ShowTables;
 import net.sf.jsqlparser.statement.truncate.Truncate;
 import net.sf.jsqlparser.statement.update.Update;
 
@@ -161,6 +162,11 @@ public class TablesNamesFinder implements SelectVisitor, FromItemVisitor, Expres
             }
         }
         select.getSelectBody().accept(this);
+    }
+
+    @Override
+    public void visit(ShowTables showTables) {
+        throw new UnsupportedOperationException(NOT_SUPPORTED_YET);
     }
 
     /**

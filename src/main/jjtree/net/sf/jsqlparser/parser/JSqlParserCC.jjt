@@ -79,6 +79,7 @@ import net.sf.jsqlparser.statement.select.*;
 import net.sf.jsqlparser.statement.truncate.*;
 import net.sf.jsqlparser.statement.update.*;
 import net.sf.jsqlparser.statement.merge.*;
+import net.sf.jsqlparser.statement.show.*;
 import java.util.*;
 
 /**
@@ -283,6 +284,8 @@ TOKEN: /* SQL Keywords. prefixed with K_ to avoid name clashes */
 |   <K_DISABLE : "DISABLE">
 |   <K_USE : "USE">
 |   <K_FORCE : "FORCE">
+|   <K_SHOW : "SHOW">
+|   <K_TABLES : "TABLES">
 }
 
 TOKEN : /* Stuff */
@@ -392,7 +395,9 @@ Statement SingleStatement() :
         |
         stm = Set()
         |
-        stm = Commit() 
+        stm = Commit()
+        |
+        stm = ShowTables()
         )
     } catch (ParseException e) {
         if (errorRecovery) {
@@ -3346,3 +3351,21 @@ Commit Commit():
     return commit;
   }
 }
+
+ShowTables ShowTables():
+{
+  ShowTables showTables = new ShowTables();
+  Token token = null;
+  String databaseName = null;
+  String pattern = null;
+}
+{
+  <K_SHOW> <K_TABLES>
+  [(token=<K_IN> | token=<K_FROM>) { showTables.setDatabaseModifier(token.image);}
+     databaseName = RelObjectName() { showTables.setDatabase(new Database(databaseName));}]
+  [<K_LIKE> (token=<S_CHAR_LITERAL> | token=<S_QUOTED_IDENTIFIER>) { showTables.setPattern(token.image);}]
+  {
+      return showTables;
+  }
+}
+
